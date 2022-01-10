@@ -63,6 +63,7 @@ def hypothesis():
 """
     - after clarifying whether FlyUIBK performs worse than LDA it might be helpful to find reasons for delay in 
       dataset --> e.g. Regression analysis
+    - maybe get those statistics per route and airline --> just a change in input params @main function
 """
 
 def normalizing_duration(df):
