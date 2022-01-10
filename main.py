@@ -36,7 +36,7 @@ def delay_plots(df):
 
 def statistics(df):
     df['Delay_per_minute_flight_duration'] = df['Arrival delay in minutes']/df['expec_flight_duration']
-    df.to_csv('C:/Users/Lucas/Desktop/Master/01_Semester/Betriebliche Informationssysteme/Case 5 - FlyUIBK/output.csv',
+    df.to_csv('C:/Users/Lucas/PycharmProjects/bis_case5/output.csv',
               sep=';')
     temp_df = df.loc[df['Airline'] == 'FlyUIBK']
     temp_df.plot(y='Arrival delay in minutes', use_index=True)
@@ -75,7 +75,7 @@ def normalizing_duration(df):
     df['expec_flight_duration'] = df['expec_flight_duration']/np.timedelta64(1,'m')
     df['actual_flight_duration'] = df['actual_arrival'] - df['Departure']
     df['actual_flight_duration'] = df['actual_flight_duration']/np.timedelta64(1,'m')
-    df.to_csv('C:/Users/Lucas/Desktop/Master/01_Semester/Betriebliche Informationssysteme/Case 5 - FlyUIBK/output.csv', sep=';')
+    df.to_csv('C:/Users/Lucas/PycharmProjects/bis_case5/output.csv', sep=';')
     return df
 
 def define_routes(df):
