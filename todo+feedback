@@ -1,0 +1,17 @@
+Open to-do's:
+    - comparison table - FlyUIBK-LDA
+        - delayed/on-time/not-on-time/cancelled
+    - explaining performance differences due to FlyUIBKs high outliers
+        - LDA cancelled, while flyuibk didn't but had high delay --> more of an positive observation for FlyUIBK
+        - FlyUIBK performs better if we observe all delays, not just the ones defined as delay (>15min)
+    - maybe normalize time differences by adding those to the delays of LDA
+    - hypothesis test whether FlyUIBK actually performs worse than LDA --> additionally preparing test whether data
+      comes from the same population
+      --> test necessary for non-normal distributed data
+    - goal is to follow the logic:
+        1. "classic" performance measures
+        2. highlight problems with those and propose
+        3. conclusion whether the performance is actually worse/better than LDA's performance
+      
+      
+      feedback stefan:
