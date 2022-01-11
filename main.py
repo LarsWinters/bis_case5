@@ -24,25 +24,28 @@ def delay_plots(df):
     temp_df = df.loc[df['Delay indicator'] == 1]
     temp_df = temp_df.loc[df['Airline']== 'FlyUIBK']
     temp_df = (temp_df.groupby(['Arrival delay in minutes','Day of Week']).size())
-    temp_df.groupby('Day of Week').count().plot(x='Day of Week', y='Arrival delay in minutes', kind='bar')
-    plt.show()
+    #temp_df.groupby('Day of Week').count().plot(x='Day of Week', y='Arrival delay in minutes', kind='bar')
+    #plt.show()
     # plot occurences of delays per day of week for FlyUIBK
     temp2_df = df.loc[df['Delay indicator']==1]
     temp2_df = temp2_df.loc[temp2_df['Airline'].str.contains('LDA')]
     temp2_df = (temp2_df.groupby(['Arrival delay in minutes','Day of Week']).size())
-    temp2_df.groupby('Day of Week').count().plot(x='Day of Week', y='Arrival delay in minutes', kind='bar')
-    plt.show()
-    return
+    #temp2_df.groupby('Day of Week').count().plot(x='Day of Week', y='Arrival delay in minutes', kind='bar')
+    #plt.show()
+    return temp_df, temp2_df
 
 def statistics(df):
     df['Delay_per_minute_flight_duration'] = df['Arrival delay in minutes']/df['expec_flight_duration']
     df.to_csv('C:/Users/Lucas/PycharmProjects/bis_case5/output.csv',
               sep=';')
+    # plot distribution of delays per airline
     temp_df = df.loc[df['Airline'] == 'FlyUIBK']
-    temp_df.plot(y='Arrival delay in minutes', use_index=True)
+    temp_df['Arrival delay in minutes'].value_counts().sort_index().plot(kind='bar')
+    plt.axvline(x=15, color='#DC143C')
     plt.show()
     temp2_df = df.loc[df['Airline'].str.contains('LDA')]
-    temp2_df.plot(y='Arrival delay in minutes', use_index=True)
+    temp2_df['Arrival delay in minutes'].value_counts().sort_index().plot(kind='bar')
+    plt.axvline(x=15, color='#DC143C')
     plt.show()
     print('Mean delay of FlyUIBK in minutes:', round(temp_df['Arrival delay in minutes'].mean(),2))
     print('Mean delay of LDA in minutes:', round(temp2_df['Arrival delay in minutes'].mean(),2))
@@ -50,13 +53,14 @@ def statistics(df):
     print('Median delay of LDA in minutes:', round(temp2_df['Arrival delay in minutes'].median(), 2))
     # how to normalize differences in estimated flight durations? @stefan
     # possible solution: delay per minute fly time --> normalized count of flights + delay
-    print('Mean delay per minute planned flight duration (FlyUIBK):', round(temp_df['Delay_per_minute_flight_duration'].mean(),2))
-    print('Mean delay per minute planned flight duration (LDA):',
-          round(temp2_df['Delay_per_minute_flight_duration'].mean(), 2))
+    # print('Mean delay per minute planned flight duration (FlyUIBK):', round(temp_df['Delay_per_minute_flight_duration'].mean(),2))
+    # print('Mean delay per minute planned flight duration (LDA):',
+    #      round(temp2_df['Delay_per_minute_flight_duration'].mean(), 2))
     return
 
 def hypothesis():
     #hypothesis test to find out whether LDA truly performs better than FlyUBIK regarding the delay times
+    # wilcoxon rank sum test seems like a good solution to test whether flyuibk average delay is higher than LDA's
     return
 
 # open ideas:
@@ -92,7 +96,8 @@ if __name__ == '__main__':
     df = raw_data()
     df = normalizing_duration(df)
     txl_vie, vie_txl, vie_osl, osl_vie = define_routes(df)
+    temp_df, temp2_df = delay_plots(df)
     statistics(df)
-    delay_plots(df)
+
 
 
