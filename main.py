@@ -1,4 +1,18 @@
 # Case 5 BIS - Lucas Winkler
+# open to-dos:
+"""
+    open to-do's
+    - comparison table - FlyUIBK-LDA
+        - delayed/on-time/not-on-time/cancelled
+    - explaining performance differences due to FlyUIBKs high outliers
+        - LDA cancelled, while flyuibk didn't but had high delay --> more of an positive observation for FlyUIBK
+        - FlyUIBK performs better if we observe all delays, not just the ones defined as delay (>15min)
+    - maybe normalize time differences by adding those to the delays of LDA
+    - hypothesis test whether FlyUIBK actually performs worse than LDA --> additionally preparing test whether data
+      comes from the same population
+      --> how to handle non-normal distributed data
+"""
+
 # import libaries
 import pandas as pd
 import numpy as np
@@ -8,13 +22,16 @@ from matplotlib import pyplot as plt
 
 
 def raw_data():
-    path = 'C:/Users/Lucas/Desktop/Master/01_Semester/Betriebliche Informationssysteme/Case 5 - FlyUIBK/raw_data.csv'
+    # here is the path to the data saved as csv file necessary --> depending on where it is saved
+    #path = 'C:/Users/Lucas/Desktop/Master/01_Semester/Betriebliche Informationssysteme/Case 5 - FlyUIBK/raw_data.csv'
+    path = 'C:/Users/Lucas/Desktop/Case5/raw_data.csv'
     try:
         normPath = path.replace(os.sep, '/')
     except:
         print('Error while normalizing path.')
     df = pd.read_csv(normPath, sep=';')
     df.fillna(0)
+    print(df.dtypes)
     df = df.astype({"Arrival delay in minutes":'int64', "Day of Week":'int64',"Delay indicator":'int64'})
     return df
 
@@ -50,21 +67,15 @@ def statistics(df):
     print('Median delay of LDA in minutes:', round(temp2_df['Arrival delay in minutes'].median(), 2))
     # how to normalize differences in estimated flight durations? @stefan
     # possible solution: delay per minute fly time --> normalized count of flights + delay
-    print('Mean delay per minute planned flight duration (FlyUIBK):', round(temp_df['Delay_per_minute_flight_duration'].mean(),2))
-    print('Mean delay per minute planned flight duration (LDA):',
-          round(temp2_df['Delay_per_minute_flight_duration'].mean(), 2))
+    #print('Mean delay per minute planned flight duration (FlyUIBK):', round(temp_df['Delay_per_minute_flight_duration'].mean(),2))
+    #print('Mean delay per minute planned flight duration (LDA):',
+    #      round(temp2_df['Delay_per_minute_flight_duration'].mean(), 2))
     return
 
 def hypothesis():
     #hypothesis test to find out whether LDA truly performs better than FlyUBIK regarding the delay times
     return
 
-# open ideas:
-"""
-    - after clarifying whether FlyUIBK performs worse than LDA it might be helpful to find reasons for delay in 
-      dataset --> e.g. Regression analysis
-    - maybe get those statistics per route and airline --> just a change in input params @main function
-"""
 
 def normalizing_duration(df):
     # not resistant to flights with different dates (e.g. flight departures at 11pm and arrives at 2am the next day)
