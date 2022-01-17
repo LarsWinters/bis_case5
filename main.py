@@ -2,11 +2,12 @@
 # import libaries
 import pandas as pd
 import numpy as np
-import traceback, sys
+from scipy.stats import shapiro
 import os
 from matplotlib import pyplot as plt
 import statsmodels
 import seaborn as sns
+from scipy.stats import mannwhitneyu
 
 
 def raw_data():
@@ -38,7 +39,7 @@ def delay_plots(df):
     # plt.show()
     # plot occurences of delays per day of week for FlyUIBK
     temp2_df = df.loc[df['Delay indicator'] == 1]
-    temp2_df = temp2_df.loc[temp2_df['Airline'].str.contains('LDA')]
+    temp2_df = temp2_df.loc[temp2_df['Airline'] == 'LDA']
     temp2_df = (temp2_df.groupby(['Arrival delay in minutes', 'Day of Week']).size())
     # temp2_df.groupby('Day of Week').count().plot(x='Day of Week', y='Arrival delay in minutes', kind='bar')
     # plt.show()
@@ -92,9 +93,9 @@ def statistics(df):
                   order=['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],palette='deep')
     plt.axhline(y=15, color='#DC143C')
     plt.show()
-    sns.countplot(x='day', data=temp_df,order=['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'])
+    sns.countplot(x='day', data=temp_df,order=['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],palette='deep')
     plt.show()
-    sns.countplot(x='day', data=temp2_df,order=['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'])
+    sns.countplot(x='day', data=temp2_df,order=['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],palette='deep')
     plt.show()
 
 
@@ -113,19 +114,18 @@ def statistics(df):
     return
 
 
-def hypothesis():
+def hypothesis(df):
     # hypothesis test to find out whether LDA truly performs better than FlyUBIK regarding the delay times
     # wilcoxon rank sum test seems like a good solution to test whether flyuibk average delay is higher than LDA's
+    temp7_df = df.loc[(df['Airline'] == 'FlyUIBK') & (df['Arrival delay in minutes'] > 0)].copy()
+    temp8_df = df.loc[(df['Airline'] == 'LDA') & (df['Arrival delay in minutes'] > 0)].copy()
+    temp7_df['lognorm'] = np.log(temp7_df['Arrival delay in minutes'])
+    temp8_df['lognorm'] = np.log(temp8_df['Arrival delay in minutes'])
+    stat, p = mannwhitneyu(temp7_df['Arrival delay in minutes'], temp8_df['Arrival delay in minutes'], alternative='two-sided')
+    stat_less, p_less = mannwhitneyu(temp7_df['Arrival delay in minutes'], temp8_df['Arrival delay in minutes'], alternative='less')
+    print(stat, p)
+    print(stat_less, p_less)
     return
-
-
-# open ideas:
-"""
-    - after clarifying whether FlyUIBK performs worse than LDA it might be helpful to find reasons for delay in 
-      dataset --> e.g. Regression analysis
-    - maybe get those statistics per route and airline --> just a change in input params @main function
-"""
-
 
 def normalizing_duration(df):
     # not resistant to flights with different dates (e.g. flight departures at 11pm and arrives at 2am the next day)
@@ -149,6 +149,25 @@ def define_routes(df):
     osl_vie = df[(df['Origin airport'] == 'OSL') & (df['Destination airport'] == 'VIE')]
     return txl_vie, vie_txl, vie_osl, osl_vie
 
+def shapiro_wilk(df):
+
+    temp5_df = df.loc[(df['Airline'] == 'FlyUIBK') & (df['Arrival delay in minutes'] > 0)].copy()
+    temp6_df = df.loc[(df['Airline'] == 'LDA') & (df['Arrival delay in minutes'] > 0)].copy()
+    temp5_df['lognorm'] = np.log(temp5_df['Arrival delay in minutes'])
+    temp6_df['lognorm'] = np.log(temp6_df['Arrival delay in minutes'])
+    shapiro_flyuibk = shapiro(temp5_df['lognorm'])
+    shapiro_lda = shapiro(temp6_df['lognorm'])
+    shapiro_lda_norm = shapiro(temp6_df['lognorm'])
+    print(shapiro_flyuibk)
+    print(shapiro_lda)
+    print(shapiro_lda_norm)
+    print('flyuibk: {:.10f}'.format(shapiro_flyuibk.statistic))
+    print('lda: {:.10f}'.format(shapiro_lda.statistic))
+    print('lda adj: {:.10f}'.format(shapiro_lda_norm.statistic))
+    print('Shapiro FlyUIBK: {:.18f}'.format(shapiro_flyuibk.pvalue))
+    print('Shapiro LDA: {:.18f}'.format(shapiro_lda.pvalue))
+    print('Shapiro LDA normalized: {:.18f}'.format(shapiro_lda_norm.pvalue))
+    return
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -156,4 +175,6 @@ if __name__ == '__main__':
     df = normalizing_duration(df)
     txl_vie, vie_txl, vie_osl, osl_vie = define_routes(df)
     temp_df, temp2_df = delay_plots(df)
-    statistics(df)
+    #statistics(df)
+    shapiro_wilk(df)
+    hypothesis(df)
