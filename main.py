@@ -86,17 +86,17 @@ def statistics(df):
     #corr, p_value = scipy.stats.pearsonr(scatter_x,scatter_y)
     temp3_df = df.loc[df['Airline'] == 'FlyUIBK']
     sns.stripplot(data=temp3_df, y='Arrival delay in minutes', x='day', hue='day',
-                  order=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], palette='deep')
+                  order=['Sun', 'Mon','Tue','Wed','Thu','Fri','Sat'], palette='deep')
     plt.axhline(y=15, color='#DC143C')
     plt.show()
     temp4_df = df.loc[df['Airline'] == 'LDA']
     sns.stripplot(data=temp4_df, y='Arrival delay in minutes', x='day', hue='day',
-                  order=['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],palette='deep')
+                  order=['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],palette='deep')
     plt.axhline(y=15, color='#DC143C')
     plt.show()
-    sns.countplot(x='day', data=temp_df,order=['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],palette='deep')
+    sns.countplot(x='day', data=temp_df,order=['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],palette='deep')
     plt.show()
-    sns.countplot(x='day', data=temp2_df,order=['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],palette='deep')
+    sns.countplot(x='day', data=temp2_df,order=['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],palette='deep')
     plt.show()
 
 
