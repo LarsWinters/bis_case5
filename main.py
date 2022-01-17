@@ -172,9 +172,10 @@ def shapiro_wilk(df):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     df, df_compl = raw_data()
-    df = normalizing_duration(df)
-    txl_vie, vie_txl, vie_osl, osl_vie = define_routes(df)
-    temp_df, temp2_df = delay_plots(df)
+    # uncomment for other features
+    #df = normalizing_duration(df)
+    #txl_vie, vie_txl, vie_osl, osl_vie = define_routes(df)
+    #temp_df, temp2_df = delay_plots(df)
     #statistics(df)
     shapiro_wilk(df)
     hypothesis(df)
