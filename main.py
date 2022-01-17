@@ -5,11 +5,12 @@ import numpy as np
 from scipy.stats import shapiro
 import os
 from matplotlib import pyplot as plt
+# necessary for the robust parameter of the regression plot, do not comment/delete!
 import statsmodels
 import seaborn as sns
 from scipy.stats import mannwhitneyu
 
-
+# import of raw data + seperated df without cancelled flights for calculations
 def raw_data():
     path = 'C:/Users/Lucas/Desktop/Master/01_Semester/Betriebliche Informationssysteme/Case 5 - FlyUIBK/raw_data.csv'
     try:
@@ -28,7 +29,7 @@ def raw_data():
     print(df_compl.dtypes)
     return df, df_compl
 
-
+# plot delays as a bar plot
 def delay_plots(df):
     # print(df.dtypes)
     # plot occurences of delays per day of week for FlyUIBK
@@ -45,7 +46,8 @@ def delay_plots(df):
     # plt.show()
     return temp_df, temp2_df
 
-
+# several statistical methods, a little messy and might be better to split up on several functions but works....
+# commented some unneeded features of the function to reduce computation time. Feel free to uncomment and test
 def statistics(df):
     # plot distribution of delays per airline
     temp_df = df.loc[df['Airline'] == 'FlyUIBK']
@@ -74,14 +76,12 @@ def statistics(df):
     temp2_df['normalized_delay'].value_counts().sort_index().plot(kind='bar')
     plt.axvline(x=14, color='#DC143C')
     plt.show()
-    """
     sns.scatterplot(data=temp_df, y='Arrival delay in minutes', x='Number of passengers', hue='route')
     sns.regplot(data=temp_df, y='Arrival delay in minutes', x='Number of passengers', scatter=False)
     plt.show()
     sns.scatterplot(data=temp_df, y='Arrival delay in minutes', x='Number of passengers', hue='route')
     sns.regplot(data=temp_df, y='Arrival delay in minutes', x='Number of passengers', scatter=False, robust=True)
     plt.show()
-    """
     #corr, p_value = scipy.stats.pearsonr(scatter_x,scatter_y)
     temp3_df = df.loc[df['Airline'] == 'FlyUIBK']
     sns.stripplot(data=temp3_df, y='Arrival delay in minutes', x='day', hue='day',
@@ -99,24 +99,20 @@ def statistics(df):
     plt.show()
 
 
-
+    # some statistical metrics, in the end not needed in the report due to low information gain
     print('Mean delay of FlyUIBK in minutes:', round(temp_df['Arrival delay in minutes'].mean(), 2))
     print('Mean delay of LDA in minutes:', round(temp2_df['Arrival delay in minutes'].mean(), 2))
     print('Median delay of FlyUIBK in minutes:', round(temp_df['Arrival delay in minutes'].median(), 2))
     print('Median delay of LDA in minutes:', round(temp2_df['Arrival delay in minutes'].median(), 2))
     print('Mean delay of LDA (norm) in minutes:', round(temp2_df['normalized_delay'].mean(), 2))
     print('Median delay of LDA (norm) in minutes:', round(temp2_df['normalized_delay'].median(), 2))
-    # how to normalize differences in estimated flight durations? @stefan
-    # possible solution: delay per minute fly time --> normalized count of flights + delay
-    # print('Mean delay per minute planned flight duration (FlyUIBK):', round(temp_df['Delay_per_minute_flight_duration'].mean(),2))
-    # print('Mean delay per minute planned flight duration (LDA):',
-    # round(temp2_df['Delay_per_minute_flight_duration'].mean(), 2))
     return
 
-
+# hypothesis test to find out whether LDA truly performs better than FlyUBIK regarding the delay times
+# shapiro wilk test + mann whitney U / wilcoxon rank sum chosen as test methods
+# shapiro wilk because of power @Rivalis referenced in report
+# mann whitney test/wilcoxon rank sum because of non-parametric data
 def hypothesis(df):
-    # hypothesis test to find out whether LDA truly performs better than FlyUBIK regarding the delay times
-    # wilcoxon rank sum test seems like a good solution to test whether flyuibk average delay is higher than LDA's
     temp7_df = df.loc[(df['Airline'] == 'FlyUIBK') & (df['Arrival delay in minutes'] > 0)].copy()
     temp8_df = df.loc[(df['Airline'] == 'LDA') & (df['Arrival delay in minutes'] > 0)].copy()
     temp7_df['lognorm'] = np.log(temp7_df['Arrival delay in minutes'])
@@ -126,28 +122,6 @@ def hypothesis(df):
     print(stat, p)
     print(stat_less, p_less)
     return
-
-def normalizing_duration(df):
-    # not resistant to flights with different dates (e.g. flight departures at 11pm and arrives at 2am the next day)
-    # since there is no such case in the dataset it is neglected
-    df['Departure'] = pd.to_datetime(df['Departure date'] + ' ' + df['Scheduled departure time'])
-    df['expec_arrival'] = pd.to_datetime(df['Departure date'] + ' ' + df['Scheduled arrival time'])
-    df['actual_arrival'] = pd.to_datetime(df['Departure date'] + ' ' + df['Actual arrival time'])
-    df['expec_flight_duration'] = df['expec_arrival'] - df['Departure']
-    df['expec_flight_duration'] = df['expec_flight_duration'] / np.timedelta64(1, 'm')
-    df['actual_flight_duration'] = df['actual_arrival'] - df['Departure']
-    df['actual_flight_duration'] = df['actual_flight_duration'] / np.timedelta64(1, 'm')
-    df.to_csv('C:/Users/Lucas/PycharmProjects/bis_case5/output.csv', sep=';')
-    return df
-
-
-def define_routes(df):
-    # save routes in new dataframe
-    txl_vie = df[(df['Origin airport'] == 'TXL') & (df['Destination airport'] == 'VIE')]
-    vie_txl = df[(df['Origin airport'] == 'VIE') & (df['Destination airport'] == 'TXL')]
-    vie_osl = df[(df['Origin airport'] == 'VIE') & (df['Destination airport'] == 'OSL')]
-    osl_vie = df[(df['Origin airport'] == 'OSL') & (df['Destination airport'] == 'VIE')]
-    return txl_vie, vie_txl, vie_osl, osl_vie
 
 def shapiro_wilk(df):
 
@@ -173,9 +147,7 @@ def shapiro_wilk(df):
 if __name__ == '__main__':
     df, df_compl = raw_data()
     # uncomment for other features
-    #df = normalizing_duration(df)
-    #txl_vie, vie_txl, vie_osl, osl_vie = define_routes(df)
-    #temp_df, temp2_df = delay_plots(df)
-    #statistics(df)
+    temp_df, temp2_df = delay_plots(df)
+    statistics(df)
     shapiro_wilk(df)
     hypothesis(df)
