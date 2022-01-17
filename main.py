@@ -72,16 +72,17 @@ def statistics(df):
     temp2_df['Arrival delay in minutes'].value_counts().sort_index().plot(kind='bar')
     plt.axvline(x=19, color='#DC143C')
     plt.show()
-
     temp2_df['normalized_delay'].value_counts().sort_index().plot(kind='bar')
     plt.axvline(x=14, color='#DC143C')
     plt.show()
+    """
     sns.scatterplot(data=temp_df, y='Arrival delay in minutes', x='Number of passengers', hue='route')
     sns.regplot(data=temp_df, y='Arrival delay in minutes', x='Number of passengers', scatter=False)
     plt.show()
     sns.scatterplot(data=temp_df, y='Arrival delay in minutes', x='Number of passengers', hue='route')
     sns.regplot(data=temp_df, y='Arrival delay in minutes', x='Number of passengers', scatter=False, robust=True)
     plt.show()
+    """
     #corr, p_value = scipy.stats.pearsonr(scatter_x,scatter_y)
     temp3_df = df.loc[df['Airline'] == 'FlyUIBK']
     sns.stripplot(data=temp3_df, y='Arrival delay in minutes', x='day', hue='day',
@@ -119,8 +120,8 @@ def hypothesis(df):
     temp8_df['lognorm'] = np.log(temp8_df['Arrival delay in minutes'])
     stat, p = mannwhitneyu(temp7_df['Arrival delay in minutes'], temp8_df['Arrival delay in minutes'], alternative='two-sided')
     stat_less, p_less = mannwhitneyu(temp7_df['Arrival delay in minutes'], temp8_df['Arrival delay in minutes'], alternative='less')
-    print(stat, p)
-    print(stat_less, p_less)
+    print('Two-sided Mann-Whitney-U test: statistic: {} | p-value: {:.10f}'.format(stat, p))
+    print('Left-sided Mann-Whitney-U test: statistic: {} | p-value: {:.10f}'.format(stat_less, p_less))
     return
 
 def shapiro_wilk(df):
@@ -132,9 +133,11 @@ def shapiro_wilk(df):
     shapiro_flyuibk = shapiro(temp5_df['lognorm'])
     shapiro_lda = shapiro(temp6_df['lognorm'])
     shapiro_lda_norm = shapiro(temp6_df['lognorm'])
+    """
     print(shapiro_flyuibk)
     print(shapiro_lda)
     print(shapiro_lda_norm)
+    """
     print('flyuibk: {:.10f}'.format(shapiro_flyuibk.statistic))
     print('lda: {:.10f}'.format(shapiro_lda.statistic))
     print('lda adj: {:.10f}'.format(shapiro_lda_norm.statistic))
