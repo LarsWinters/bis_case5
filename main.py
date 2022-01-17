@@ -2,16 +2,18 @@
 # import libaries
 import pandas as pd
 import numpy as np
-from scipy.stats import shapiro
+from scipy.stats import shapiro, mannwhitneyu
 import os
 from matplotlib import pyplot as plt
 # necessary for the robust parameter of the regression plot, do not comment/delete!
 import statsmodels
 import seaborn as sns
-from scipy.stats import mannwhitneyu
+
 
 # import of raw data + seperated df without cancelled flights for calculations
 def raw_data():
+    # path has to be changed with the local path + data needs to be saved as .csv file....
+    # could be changed so it transforms to csv but ... yea
     path = 'C:/Users/Lucas/Desktop/Master/01_Semester/Betriebliche Informationssysteme/Case 5 - FlyUIBK/raw_data.csv'
     try:
         normPath = path.replace(os.sep, '/')
